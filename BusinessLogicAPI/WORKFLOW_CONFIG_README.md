@@ -2,7 +2,7 @@
 
 ## Overview
 The API supports two data sources for workflows:
-1. **InMemory** (for testing) - Uses test data from `appsettings.json`
+1. **InMemory** (for testing) - Uses test data from `Data/TestWorkflowData.cs`
 2. **Database** (for production) - Calls stored procedure to fetch workflow JSON
 
 ## Configuration
@@ -10,17 +10,9 @@ The API supports two data sources for workflows:
 ### appsettings.json
 ```json
 {
-  "WorkflowSettings": {
-    "DataSource": "InMemory",  // Change to "Database" for production
-    "ConnectionString": null,   // Set when using Database
-    "TestWorkflows": [          // Test data for InMemory mode
-      {
-        "CarrierId": 1,
-        "FeatureName": "DrugValidation",
-        "RequestDate": "2025-01-01T00:00:00",
-        "WorkflowJson": "[{...workflow JSON...}]"
-      }
-    ]
+  "RulesEngine": {
+    "DataSource": "InMemory",       // Change to "Database" for production
+    "ConnectionString": null        // Set when using Database
   }
 }
 ```
@@ -31,7 +23,7 @@ The API supports two data sources for workflows:
 ```json
 "DataSource": "InMemory"
 ```
-- Uses test workflows from `appsettings.json`
+- Uses test workflows from `Data/TestWorkflowData.cs`
 - No database connection needed
 - Perfect for development and testing
 
@@ -85,33 +77,34 @@ END
 
 ## Adding Test Workflows
 
-Add to `appsettings.json`:
-```json
-"TestWorkflows": [
-  {
-    "CarrierId": 1,
-    "FeatureName": "DrugValidation",
-    "RequestDate": "2025-01-01T00:00:00",
-    "WorkflowJson": "[{...}]"
-  },
-  {
-    "CarrierId": 2,
-    "FeatureName": "PlanValidation",
-    "RequestDate": "2025-02-01T00:00:00",
-    "WorkflowJson": "[{...}]"
-  }
-]
+Edit `Data/TestWorkflowData.cs` and add to the list:
+```csharp
+new WorkflowRecord
+{
+    CarrierId = 3,
+    FeatureName = "PlanValidation",
+    RequestDate = new DateTime(2025, 2, 1),
+    WorkflowJson = """
+    [
+      {
+        "WorkflowName": "RulesEngineWorkflow",
+        "GlobalParams": [...],
+        "Rules": [...]
+      }
+    ]
+    """
+}
 ```
 
 ## API Request Format
 
 ```json
 {
-  "carrierId": 1,           // REQUIRED
+  "carrierId": 1,                   // REQUIRED
   "featureName": "DrugValidation",  // REQUIRED
   "requestDate": "2025-01-15",      // REQUIRED
-  "drugId": 123,            // Optional
-  "planId": 456             // Optional
+  "drugId": 123,                    // Optional
+  "planId": 456                     // Optional
 }
 ```
 
@@ -119,7 +112,7 @@ Add to `appsettings.json`:
 
 1. **Request comes in** with `carrierId`, `featureName`, `requestDate`
 2. **Repository fetches workflow**:
-   - **InMemory**: Searches test workflows from config
+   - **InMemory**: Searches test workflows from `Data/TestWorkflowData.cs`
    - **Database**: Calls stored procedure
 3. **Service validates** the request against the workflow rules
 4. **Response returned** with validation results
