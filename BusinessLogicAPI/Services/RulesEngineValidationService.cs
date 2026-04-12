@@ -8,37 +8,37 @@ namespace BusinessLogicAPI.Services;
 
 public class RulesEngineValidationService
 {
-    private readonly IWorkflowRepository _workflowRepository;
+    private readonly IRulesRepository _rulesRepository;
 
-    public RulesEngineValidationService(IWorkflowRepository workflowRepository)
+    public RulesEngineValidationService(IRulesRepository rulesRepository)
     {
-        _workflowRepository = workflowRepository;
+        _rulesRepository = rulesRepository;
     }
 
     public async Task<RulesEngineValidationResponse> ValidateRequestAsync(RulesEngineValidationRequest request)
     {
-        var workflows = await LoadWorkflowsAsync(request.CarrierId, request.FeatureName, request.RequestDate);
+        var workflows = await LoadRulesAsync(request.CarrierId, request.FeatureName, request.RequestDate);
         var rulesEngine = CreateRulesEngine(workflows);
         var results = await ExecuteRulesAsync(rulesEngine, workflows[0].WorkflowName, request);
 
         return BuildResponse(results, request);
     }
 
-    private async Task<Workflow[]> LoadWorkflowsAsync(int carrierId, string featureName, DateTime requestDate)
+    private async Task<Workflow[]> LoadRulesAsync(int carrierId, string featureName, DateTime requestDate)
     {
-        var workflowJson = await _workflowRepository.GetWorkflowJsonAsync(carrierId, featureName, requestDate);
+        var rulesJson = await _rulesRepository.GetRulesJsonAsync(carrierId, featureName, requestDate);
 
-        if (string.IsNullOrWhiteSpace(workflowJson))
+        if (string.IsNullOrWhiteSpace(rulesJson))
         {
             throw new InvalidOperationException(
-                $"No workflow found for CarrierId={carrierId}, FeatureName={featureName}, RequestDate={requestDate:yyyy-MM-dd}");
+                $"No rules found for CarrierId={carrierId}, FeatureName={featureName}, RequestDate={requestDate:yyyy-MM-dd}");
         }
 
-        var workflows = JsonSerializer.Deserialize<Workflow[]>(workflowJson);
+        var workflows = JsonSerializer.Deserialize<Workflow[]>(rulesJson);
 
         if (workflows == null || workflows.Length == 0)
         {
-            throw new InvalidOperationException("Failed to deserialize workflow configuration");
+            throw new InvalidOperationException("Failed to deserialize rules configuration");
         }
 
         return workflows;

@@ -1,20 +1,20 @@
 using BusinessLogicAPI.Models;
 
-namespace BusinessLogicAPI.Repositories;
+namespace BusinessLogicAPI.Data;
 
-public static class InMemoryWorkflowData
+public static class TestRulesData
 {
-    public static List<WorkflowRecord> GetTestWorkflows()
+    public static List<RulesRecord> GetTestRules()
     {
-        return new List<WorkflowRecord>
+        return new List<RulesRecord>
         {
-            // Test Workflow 1: Drug and Plan Validation for Carrier 1
-            new WorkflowRecord
+            // Test Rules 1: Drug and Plan Validation for Carrier 1
+            new RulesRecord
             {
                 CarrierId = 1,
                 FeatureName = "DrugValidation",
                 RequestDate = new DateTime(2025, 1, 1),
-                WorkflowJson = """
+                Json = """
                 [
                   {
                     "WorkflowName": "RulesEngineWorkflow",
@@ -90,14 +90,14 @@ public static class InMemoryWorkflowData
                 ]
                 """
             },
-            
-            // Test Workflow 2: Different rules for Carrier 2
-            new WorkflowRecord
+
+            // Test Rules 2: Different rules for Carrier 2
+            new RulesRecord
             {
                 CarrierId = 2,
                 FeatureName = "DrugValidation",
                 RequestDate = new DateTime(2025, 1, 1),
-                WorkflowJson = """
+                Json = """
                 [
                   {
                     "WorkflowName": "RulesEngineWorkflow",

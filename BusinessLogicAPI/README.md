@@ -1,9 +1,9 @@
-# Workflow Repository Configuration Guide
+# Rules Repository Configuration Guide
 
 ## Overview
-The API supports two data sources for workflows:
-1. **InMemory** (for testing) - Uses test data from `Data/TestWorkflowData.cs`
-2. **Database** (for production) - Calls stored procedure to fetch workflow JSON
+The API supports two data sources for rules:
+1. **InMemory** (for testing) - Uses test data from `Data/TestRulesData.cs`
+2. **Database** (for production) - Calls stored procedure to fetch rules JSON
 
 ## Configuration
 
@@ -23,7 +23,7 @@ The API supports two data sources for workflows:
 ```json
 "DataSource": "InMemory"
 ```
-- Uses test workflows from `Data/TestWorkflowData.cs`
+- Uses test rules from `Data/TestRulesData.cs`
 - No database connection needed
 - Perfect for development and testing
 
@@ -32,18 +32,18 @@ The API supports two data sources for workflows:
 "DataSource": "Database",
 "ConnectionString": "Server=your-server;Database=your-db;User Id=user;Password=pass;"
 ```
-- Calls stored procedure `usp_GetWorkflowJson`
-- Requires database with `WorkflowRules` table
+- Calls stored procedure `usp_GetRulesJson`
+- Requires database with `Rules` table
 
 ## Database Setup (When Ready)
 
 ### Table Schema
 ```sql
-CREATE TABLE WorkflowRules (
+CREATE TABLE Rules (
     CarrierId INT NOT NULL,
     FeatureName NVARCHAR(100) NOT NULL,
     RequestDate DATETIME NOT NULL,
-    WorkflowJson NVARCHAR(MAX) NOT NULL,
+    Json NVARCHAR(MAX) NOT NULL,
     CreatedDate DATETIME DEFAULT GETDATE(),
     ModifiedDate DATETIME DEFAULT GETDATE(),
     PRIMARY KEY (CarrierId, FeatureName, RequestDate)
@@ -52,7 +52,7 @@ CREATE TABLE WorkflowRules (
 
 ### Stored Procedure
 ```sql
-CREATE PROCEDURE usp_GetWorkflowJson
+CREATE PROCEDURE usp_GetRulesJson
     @CarrierId INT,
     @FeatureName NVARCHAR(100),
     @RequestDate DATETIME
@@ -62,8 +62,8 @@ BEGIN
         CarrierId,
         FeatureName,
         RequestDate,
-        WorkflowJson
-    FROM WorkflowRules
+        Json
+    FROM Rules
     WHERE CarrierId = @CarrierId
       AND FeatureName = @FeatureName
       AND RequestDate <= @RequestDate
@@ -72,19 +72,19 @@ END
 ```
 
 ### Implementation Location
-- See `DatabaseWorkflowRepository.cs` for the placeholder code
+- See `DatabaseRulesRepository.cs` for the placeholder code
 - Uncomment the database code when ready to connect
 
-## Adding Test Workflows
+## Adding Test Rules
 
-Edit `Data/TestWorkflowData.cs` and add to the list:
+Edit `Data/TestRulesData.cs` and add to the list:
 ```csharp
-new WorkflowRecord
+new RulesRecord
 {
     CarrierId = 3,
     FeatureName = "PlanValidation",
     RequestDate = new DateTime(2025, 2, 1),
-    WorkflowJson = """
+    Json = """
     [
       {
         "WorkflowName": "RulesEngineWorkflow",
@@ -111,10 +111,10 @@ new WorkflowRecord
 ## How It Works
 
 1. **Request comes in** with `carrierId`, `featureName`, `requestDate`
-2. **Repository fetches workflow**:
-   - **InMemory**: Searches test workflows from `Data/TestWorkflowData.cs`
+2. **Repository fetches rules**:
+   - **InMemory**: Searches test rules from `Data/TestRulesData.cs`
    - **Database**: Calls stored procedure
-3. **Service validates** the request against the workflow rules
+3. **Service validates** the request against the rules
 4. **Response returned** with validation results
 
 ## Benefits
