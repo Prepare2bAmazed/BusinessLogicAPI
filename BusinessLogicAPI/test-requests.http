@@ -1,0 +1,106 @@
+### Test 1: Valid Drug and Plan for Carrier 1 (should PASS)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15",
+  "drugId": 123,
+  "planId": 456
+}
+
+###
+
+### Test 2: Valid Drug and Plan for Carrier 2 (should PASS)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 2,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15",
+  "drugId": 999,
+  "planId": 777
+}
+
+###
+
+### Test 3: Only required fields (should FAIL - missing optional fields)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15"
+}
+
+###
+
+### Test 4: Bypass Drug ID 888 for Carrier 1 (should PASS)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15",
+  "drugId": 888,
+  "planId": 456
+}
+
+###
+
+### Test 5: No planId provided (should FAIL PlanCheck)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15",
+  "drugId": 123
+}
+
+###
+
+### Test 6: Invalid Drug - Outside Date Range (should FAIL)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-03-15",
+  "drugId": 123,
+  "planId": 456
+}
+
+###
+
+### Test 7: Invalid Plan ID for Carrier 1 (should FAIL)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15",
+  "drugId": 123,
+  "planId": 999
+}
+
+###
+
+### Test 8: Carrier 2 with wrong drug ID (should FAIL)
+POST https://localhost:7080/rules/validate
+Content-Type: application/json
+
+{
+  "carrierId": 2,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15",
+  "drugId": 123,
+  "planId": 777
+}
