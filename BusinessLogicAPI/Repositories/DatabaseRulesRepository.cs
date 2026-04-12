@@ -81,4 +81,69 @@ CREATE TABLE Rules (
     ModifiedDate DATETIME DEFAULT GETDATE(),
     PRIMARY KEY (CarrierId, FeatureName, RequestDate)
 )
+
+Database DevOps Seed Script Example (idempotent: delete PK first, then insert):
+
+-- This pattern is safe to run repeatedly in post-deployment scripts.
+-- Example corresponds to test rules data: CarrierId=1, FeatureName='DrugValidation', RequestDate='2025-01-01'.
+
+DECLARE @CarrierId INT = 1;
+DECLARE @FeatureName NVARCHAR(100) = N'DrugValidation';
+DECLARE @RequestDate DATETIME = '2025-01-01T00:00:00';
+
+DECLARE @Json NVARCHAR(MAX) = N'[
+  {
+    "WorkflowName": "RulesEngineWorkflow",
+    "GlobalParams": [
+      {
+        "Name": "MasterDrugList",
+        "Expression": "new[] { new { Id = 123, Start = new DateTime(2025, 1, 1), End = new DateTime(2025, 2, 1) } }"
+      },
+      {
+        "Name": "MasterPlanList",
+        "Expression": "new[] { new { Id = 456, Start = new DateTime(2025, 1, 1), End = new DateTime(2025, 12, 31) } }"
+      }
+    ],
+    "Rules": [
+      {
+        "RuleName": "OverallValidation",
+        "Operator": "And",
+        "Rules": [
+          {
+            "RuleName": "DrugCheck",
+            "Expression": "input.DrugId != null && (RulesEngineUtils.IsValid(MasterDrugList, input.DrugId, input.RequestDate ?? DateTime.Now, input.RequestDate ?? DateTime.Now) || input.DrugId == 888)"
+          },
+          {
+            "RuleName": "PlanCheck",
+            "Expression": "input.PlanId != null && RulesEngineUtils.IsValid(MasterPlanList, input.PlanId, input.RequestDate ?? DateTime.Now, input.RequestDate ?? DateTime.Now)"
+          }
+        ]
+      }
+    ]
+  }
+]';
+
+DELETE FROM dbo.Rules
+WHERE CarrierId = @CarrierId
+  AND FeatureName = @FeatureName
+  AND RequestDate = @RequestDate;
+
+INSERT INTO dbo.Rules
+(
+    CarrierId,
+    FeatureName,
+    RequestDate,
+    Json,
+    CreatedDate,
+    ModifiedDate
+)
+VALUES
+(
+    @CarrierId,
+    @FeatureName,
+    @RequestDate,
+    @Json,
+    SYSUTCDATETIME(),
+    SYSUTCDATETIME()
+);
 */
