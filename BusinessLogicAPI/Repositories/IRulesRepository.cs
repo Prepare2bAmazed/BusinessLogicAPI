@@ -1,5 +1,3 @@
-using BusinessLogicAPI.Models;
-
 namespace BusinessLogicAPI.Repositories;
 
 public interface IRulesRepository
