@@ -1,3 +1,6 @@
+## License
+This project is licensed under the terms of the CC0 1.0 Universal (True Public Domain). You can use it however you like—no credit or attribution required!
+
 # Rules Repository Configuration Guide
 
 ## Overview
