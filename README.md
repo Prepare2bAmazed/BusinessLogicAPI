@@ -40,16 +40,27 @@ The API supports two data sources for rules:
 
 ## Database Setup (When Ready)
 
+### Rules Table Fields (dbo.Rules)
+- `CarrierId` (INT, NOT NULL)
+- `FeatureName` (NVARCHAR(100), NOT NULL)
+- `ActiveDate` (DATETIME, NOT NULL)
+- `Json` (NVARCHAR(MAX), NOT NULL)
+- `CreatedDate` (DATETIME, default `GETDATE()`)
+- `ModifiedDate` (DATETIME, default `GETDATE()`)
+
+Primary key:
+- `(CarrierId, FeatureName, ActiveDate)`
+
 ### Table Schema
 ```sql
 CREATE TABLE Rules (
     CarrierId INT NOT NULL,
     FeatureName NVARCHAR(100) NOT NULL,
-    RequestDate DATETIME NOT NULL,
+    ActiveDate DATETIME NOT NULL,
     Json NVARCHAR(MAX) NOT NULL,
     CreatedDate DATETIME DEFAULT GETDATE(),
     ModifiedDate DATETIME DEFAULT GETDATE(),
-    PRIMARY KEY (CarrierId, FeatureName, RequestDate)
+    PRIMARY KEY (CarrierId, FeatureName, ActiveDate)
 )
 ```
 
@@ -64,13 +75,13 @@ BEGIN
     SELECT TOP 1 
         CarrierId,
         FeatureName,
-        RequestDate,
+        ActiveDate,
         Json
     FROM Rules
     WHERE CarrierId = @CarrierId
       AND FeatureName = @FeatureName
-      AND RequestDate <= @RequestDate
-    ORDER BY RequestDate DESC
+      AND ActiveDate <= @RequestDate
+    ORDER BY ActiveDate DESC
 END
 ```
 
