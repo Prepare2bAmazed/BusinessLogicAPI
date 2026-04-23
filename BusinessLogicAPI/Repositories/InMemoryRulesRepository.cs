@@ -22,8 +22,8 @@ public class InMemoryRulesRepository : IRulesRepository
         var rulesRecord = _rules
             .Where(r => r.CarrierId == carrierId 
                      && r.FeatureName.Equals(featureName, StringComparison.OrdinalIgnoreCase)
-                     && r.RequestDate <= requestDate)
-            .OrderByDescending(r => r.RequestDate)
+                     && r.ActiveDate <= requestDate)
+            .OrderByDescending(r => r.ActiveDate)
             .FirstOrDefault();
 
         return Task.FromResult(rulesRecord?.Json);

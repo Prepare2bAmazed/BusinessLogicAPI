@@ -58,16 +58,16 @@ CREATE PROCEDURE usp_GetRulesJson
     @RequestDate DATETIME
 AS
 BEGIN
-    SELECT TOP 1 
+    SELECT TOP 1
         CarrierId,
         FeatureName,
-        RequestDate,
+        ActiveDate,
         Json
     FROM Rules
     WHERE CarrierId = @CarrierId
       AND FeatureName = @FeatureName
-      AND RequestDate <= @RequestDate
-    ORDER BY RequestDate DESC
+      AND ActiveDate <= @RequestDate
+    ORDER BY ActiveDate DESC
 END
 
 Table Schema Example:
@@ -75,23 +75,23 @@ Table Schema Example:
 CREATE TABLE Rules (
     CarrierId INT NOT NULL,
     FeatureName NVARCHAR(100) NOT NULL,
-    RequestDate DATETIME NOT NULL,
+    ActiveDate DATETIME NOT NULL,
     Json NVARCHAR(MAX) NOT NULL,
     CreatedDate DATETIME DEFAULT GETDATE(),
     ModifiedDate DATETIME DEFAULT GETDATE(),
-    PRIMARY KEY (CarrierId, FeatureName, RequestDate)
+    PRIMARY KEY (CarrierId, FeatureName, ActiveDate)
 )
 
 Database DevOps Seed Script Example (idempotent: delete PK first, then insert):
 
 -- This pattern is safe to run repeatedly in post-deployment scripts.
--- Example corresponds to test rules data: CarrierId=1, FeatureName='DrugValidation', RequestDate='2025-01-01'.
+-- Example corresponds to test rules data: CarrierId=1, FeatureName='DrugValidation', ActiveDate='2025-01-01'.
 
 DECLARE @CarrierId INT = 1;
 DECLARE @FeatureName NVARCHAR(100) = N'DrugValidation';
-DECLARE @RequestDate DATETIME = '2025-01-01T00:00:00';
+DECLARE @ActiveDate DATETIME = '2025-01-01T00:00:00';
 
-DECLARE @Json NVARCHAR(MAX) = N'[
+DECLARE @Json NVARCHAR(MAX) = N' [
   {
     "WorkflowName": "RulesEngineWorkflow",
     "GlobalParams": [
@@ -121,18 +121,18 @@ DECLARE @Json NVARCHAR(MAX) = N'[
       }
     ]
   }
-]';
+] ';
 
 DELETE FROM dbo.Rules
 WHERE CarrierId = @CarrierId
   AND FeatureName = @FeatureName
-  AND RequestDate = @RequestDate;
+  AND ActiveDate = @ActiveDate;
 
 INSERT INTO dbo.Rules
 (
     CarrierId,
     FeatureName,
-    RequestDate,
+    ActiveDate,
     Json,
     CreatedDate,
     ModifiedDate
@@ -141,7 +141,7 @@ VALUES
 (
     @CarrierId,
     @FeatureName,
-    @RequestDate,
+    @ActiveDate,
     @Json,
     SYSUTCDATETIME(),
     SYSUTCDATETIME()

@@ -13,7 +13,7 @@ public static class TestRulesData
             {
                 CarrierId = 1,
                 FeatureName = "DrugValidation",
-                RequestDate = new DateTime(2025, 1, 1),
+                ActiveDate = new DateTime(2025, 1, 1),
                 Json = """
                 [
                   {
@@ -96,7 +96,7 @@ public static class TestRulesData
             {
                 CarrierId = 2,
                 FeatureName = "DrugValidation",
-                RequestDate = new DateTime(2025, 1, 1),
+                ActiveDate = new DateTime(2025, 1, 1),
                 Json = """
                 [
                   {
