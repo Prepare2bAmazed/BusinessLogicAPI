@@ -128,8 +128,7 @@ new RulesRecord
 dotnet run
 ```
 
-Default local URLs from launch settings:
-- `http://localhost:5062`
+Default local URL from launch settings:
 - `https://localhost:7080`
 
 ## API Documentation & UI (Scalar + OpenAPI)
@@ -139,17 +138,12 @@ In Development environment, the app exposes:
 - Scalar API Reference UI: `/scalar`
 
 Examples:
-- `http://localhost:5062/openapi/v1.json`
-- `http://localhost:5062/scalar`
+- `https://localhost:7080/openapi/v1.json`
+- `https://localhost:7080/scalar`
 
 ## OpenAPI Calls (API Self-Description)
 
 Use these calls to have the API describe itself in OpenAPI format.
-
-### cURL (HTTP)
-```bash
-curl "http://localhost:5062/openapi/v1.json"
-```
 
 ### cURL (HTTPS, local dev cert)
 ```bash
@@ -158,12 +152,12 @@ curl -k "https://localhost:7080/openapi/v1.json"
 
 ### PowerShell
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:5062/openapi/v1.json" -Method Get
+Invoke-RestMethod -Uri "https://localhost:7080/openapi/v1.json" -Method Get
 ```
 
 ### Save the OpenAPI document to a file
 ```powershell
-Invoke-WebRequest -Uri "http://localhost:5062/openapi/v1.json" -OutFile "openapi.json"
+Invoke-WebRequest -Uri "https://localhost:7080/openapi/v1.json" -OutFile "openapi.json"
 ```
 
 ## Multiple Ways to Test the API
@@ -172,7 +166,7 @@ Use any of these approaches.
 
 ### 1) Scalar UI (browser)
 1. Run the API with `dotnet run`.
-2. Open `http://localhost:5062/scalar`.
+2. Open `https://localhost:7080/scalar`.
 3. Find `POST /rules/validate`.
 4. Use this sample body:
 
@@ -188,7 +182,7 @@ Use any of these approaches.
 
 ### 2) cURL
 ```bash
-curl -X POST "http://localhost:5062/rules/validate" \
+curl -k -X POST "https://localhost:7080/rules/validate" \
   -H "Content-Type: application/json" \
   -d '{
     "carrierId": 1,
@@ -209,12 +203,12 @@ $body = @{
   planId = 456
 } | ConvertTo-Json
 
-Invoke-RestMethod -Uri "http://localhost:5062/rules/validate" -Method Post -ContentType "application/json" -Body $body
+Invoke-RestMethod -Uri "https://localhost:7080/rules/validate" -Method Post -ContentType "application/json" -Body $body
 ```
 
 ### 4) Postman or Bruno
 - Method: `POST`
-- URL: `http://localhost:5062/rules/validate`
+- URL: `https://localhost:7080/rules/validate`
 - Header: `Content-Type: application/json`
 - Body: raw JSON (same sample payload above)
 

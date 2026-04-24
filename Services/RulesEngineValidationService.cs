@@ -77,11 +77,16 @@ public class RulesEngineValidationService
     }
 
     private RulesEngineValidationResponse BuildResponse(
-        List<RuleResultTree> results, 
+        List<RuleResultTree> results,
         RulesEngineValidationRequest request)
     {
-        var mainResult = results.First();
-        var isValid = mainResult.IsSuccess;
+        var evaluatedResults = results
+            .SelectMany(r => r.ChildResults != null && r.ChildResults.Any()
+                ? r.ChildResults
+                : new[] { r })
+            .ToList();
+
+        var isValid = evaluatedResults.All(r => r.IsSuccess);
 
         return new RulesEngineValidationResponse
         {
@@ -90,15 +95,15 @@ public class RulesEngineValidationService
             Message = isValid
                 ? "All validations passed - Request approved"
                 : "Request rejected - One or more validations failed",
-            Details = mainResult.ChildResults?.Select(cr => new RuleDetail
+            Details = evaluatedResults.Select(r => new RuleDetail
             {
-                Rule = cr.Rule.RuleName,
-                Passed = cr.IsSuccess,
-                Message = cr.IsSuccess
-                    ? $"{cr.Rule.RuleName} passed"
-                    : $"{cr.Rule.RuleName} failed",
-                Error = cr.ExceptionMessage
-            }).ToList() ?? new List<RuleDetail>(),
+                Rule = r.Rule.RuleName,
+                Passed = r.IsSuccess,
+                Message = r.IsSuccess
+                    ? $"{r.Rule.RuleName} passed"
+                    : $"{r.Rule.RuleName} failed",
+                Error = r.ExceptionMessage
+            }).ToList(),
             Input = new RequestInput
             {
                 CarrierId = request.CarrierId,

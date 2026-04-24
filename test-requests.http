@@ -1,6 +1,9 @@
-### Test 1: Valid Drug and Plan for Carrier 1 (should PASS)
-POST https://localhost:7080/rules/validate
+@BusinessLogicAPI_HostAddress = https://localhost:7080
+
+### Test 1: Carrier 1 valid drug + valid plan (PASS)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
 Content-Type: application/json
+Accept: application/json
 
 {
   "carrierId": 1,
@@ -12,9 +15,10 @@ Content-Type: application/json
 
 ###
 
-### Test 2: Valid Drug and Plan for Carrier 2 (should PASS)
-POST https://localhost:7080/rules/validate
+### Test 2: Carrier 2 valid drug + valid plan (PASS)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
 Content-Type: application/json
+Accept: application/json
 
 {
   "carrierId": 2,
@@ -26,21 +30,10 @@ Content-Type: application/json
 
 ###
 
-### Test 3: Only required fields (should FAIL - missing optional fields)
-POST https://localhost:7080/rules/validate
+### Test 3: Carrier 1 bypass drug 888 + valid plan (PASS)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
 Content-Type: application/json
-
-{
-  "carrierId": 1,
-  "featureName": "DrugValidation",
-  "requestDate": "2025-01-15"
-}
-
-###
-
-### Test 4: Bypass Drug ID 888 for Carrier 1 (should PASS)
-POST https://localhost:7080/rules/validate
-Content-Type: application/json
+Accept: application/json
 
 {
   "carrierId": 1,
@@ -52,9 +45,23 @@ Content-Type: application/json
 
 ###
 
-### Test 5: No planId provided (should FAIL PlanCheck)
-POST https://localhost:7080/rules/validate
+### Test 4: Missing optional fields drugId/planId (FAIL)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
 Content-Type: application/json
+Accept: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15"
+}
+
+###
+
+### Test 5: Missing planId (FAIL)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
+Content-Type: application/json
+Accept: application/json
 
 {
   "carrierId": 1,
@@ -65,9 +72,10 @@ Content-Type: application/json
 
 ###
 
-### Test 6: Invalid Drug - Outside Date Range (should FAIL)
-POST https://localhost:7080/rules/validate
+### Test 6: Carrier 1 valid plan but drug outside valid date range (FAIL)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
 Content-Type: application/json
+Accept: application/json
 
 {
   "carrierId": 1,
@@ -79,9 +87,10 @@ Content-Type: application/json
 
 ###
 
-### Test 7: Invalid Plan ID for Carrier 1 (should FAIL)
-POST https://localhost:7080/rules/validate
+### Test 7: Carrier 1 invalid planId (FAIL)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
 Content-Type: application/json
+Accept: application/json
 
 {
   "carrierId": 1,
@@ -93,9 +102,10 @@ Content-Type: application/json
 
 ###
 
-### Test 8: Carrier 2 with wrong drug ID (should FAIL)
-POST https://localhost:7080/rules/validate
+### Test 8: Carrier 2 wrong drugId with valid plan (FAIL)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
 Content-Type: application/json
+Accept: application/json
 
 {
   "carrierId": 2,
@@ -104,3 +114,20 @@ Content-Type: application/json
   "drugId": 123,
   "planId": 777
 }
+
+###
+
+### Test 9: Unknown feature name (ERROR expected: Problem response)
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
+Content-Type: application/json
+Accept: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "UnknownFeature",
+  "requestDate": "2025-01-15",
+  "drugId": 123,
+  "planId": 456
+}
+
+###

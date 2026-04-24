@@ -21,11 +21,11 @@ public static class TestRulesData
                     "GlobalParams": [
                       {
                         "Name": "MasterDrugList",
-                        "Expression": "new[] { new { Id = 123, Start = new DateTime(2025, 1, 1), End = new DateTime(2025, 2, 1) } }"
+                        "Expression": "new[] { new (123 as ID, \"2025-01-01\" as start, \"2025-02-01\" as end) }"
                       },
                       {
                         "Name": "MasterPlanList",
-                        "Expression": "new[] { new { Id = 456, Start = new DateTime(2025, 1, 1), End = new DateTime(2025, 12, 31) } }"
+                        "Expression": "new[] { new (456 as ID, \"2025-01-01\" as start, \"2025-12-31\" as end) }"
                       }
                     ],
                     "Rules": [
@@ -35,7 +35,7 @@ public static class TestRulesData
                         "Rules": [
                           {
                             "RuleName": "DrugCheck",
-                            "Expression": "input.DrugId != null && (RulesEngineUtils.IsValid(MasterDrugList, input.DrugId, input.RequestDate ?? DateTime.Now, input.RequestDate ?? DateTime.Now) || input.DrugId == 888)",
+                            "Expression": "input.DrugId != null && (RulesEngineUtils.IsValid(MasterDrugList, input.DrugId, input.RequestDate, input.RequestDate) || input.DrugId == 888)",
                             "Actions": {
                               "OnSuccess": {
                                 "Name": "OutputExpression",
@@ -53,7 +53,7 @@ public static class TestRulesData
                           },
                           {
                             "RuleName": "PlanCheck",
-                            "Expression": "input.PlanId != null && RulesEngineUtils.IsValid(MasterPlanList, input.PlanId, input.RequestDate ?? DateTime.Now, input.RequestDate ?? DateTime.Now)",
+                            "Expression": "input.PlanId != null && RulesEngineUtils.IsValid(MasterPlanList, input.PlanId, input.RequestDate, input.RequestDate)",
                             "Actions": {
                               "OnSuccess": {
                                 "Name": "OutputExpression",
@@ -104,11 +104,11 @@ public static class TestRulesData
                     "GlobalParams": [
                       {
                         "Name": "MasterDrugList",
-                        "Expression": "new[] { new { Id = 999, Start = new DateTime(2025, 1, 1), End = new DateTime(2025, 12, 31) } }"
+                        "Expression": "new[] { new (999 as ID, \"2025-01-01\" as start, \"2025-12-31\" as end) }"
                       },
                       {
                         "Name": "MasterPlanList",
-                        "Expression": "new[] { new { Id = 777, Start = new DateTime(2025, 1, 1), End = new DateTime(2025, 6, 30) } }"
+                        "Expression": "new[] { new (777 as ID, \"2025-01-01\" as start, \"2025-06-30\" as end) }"
                       }
                     ],
                     "Rules": [
@@ -118,7 +118,7 @@ public static class TestRulesData
                         "Rules": [
                           {
                             "RuleName": "DrugCheck",
-                            "Expression": "input.DrugId != null && RulesEngineUtils.IsValid(MasterDrugList, input.DrugId, input.RequestDate ?? DateTime.Now, input.RequestDate ?? DateTime.Now)",
+                            "Expression": "input.DrugId != null && RulesEngineUtils.IsValid(MasterDrugList, input.DrugId, input.RequestDate, input.RequestDate)",
                             "Actions": {
                               "OnSuccess": {
                                 "Name": "OutputExpression",
@@ -136,7 +136,7 @@ public static class TestRulesData
                           },
                           {
                             "RuleName": "PlanCheck",
-                            "Expression": "input.PlanId != null && RulesEngineUtils.IsValid(MasterPlanList, input.PlanId, input.RequestDate ?? DateTime.Now, input.RequestDate ?? DateTime.Now)",
+                            "Expression": "input.PlanId != null && RulesEngineUtils.IsValid(MasterPlanList, input.PlanId, input.RequestDate, input.RequestDate)",
                             "Actions": {
                               "OnSuccess": {
                                 "Name": "OutputExpression",
@@ -176,3 +176,6 @@ public static class TestRulesData
         };
     }
 }
+
+
+

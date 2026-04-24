@@ -1,6 +1,25 @@
-@BusinessLogicAPI_HostAddress = http://localhost:5062
+@BusinessLogicAPI_HostAddress = https://localhost:7080
 
-GET {{BusinessLogicAPI_HostAddress}}/weatherforecast/
+POST {{BusinessLogicAPI_HostAddress}}/rules/validate
+Content-Type: application/json
 Accept: application/json
+
+{
+  "carrierId": 1,
+  "featureName": "DrugValidation",
+  "requestDate": "2025-01-15",
+  "drugId": 123,
+  "planId": 456
+}
+
+###
+
+GET {{BusinessLogicAPI_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
+
+GET {{BusinessLogicAPI_HostAddress}}/scalar
+Accept: text/html
 
 ###
